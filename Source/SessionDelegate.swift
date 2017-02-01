@@ -27,6 +27,15 @@ import Foundation
 /// Responsible for handling all delegate callbacks for the underlying session.
 open class SessionDelegate: NSObject {
 
+    // MARK: Properties
+    
+    var retrier: RequestRetrier?
+    weak var sessionManager: SessionManager?
+    
+    private var requests: [Int: Request] = [:]
+    private let lock = NSLock()
+
+    
     // MARK: URLSessionDelegate Overrides
 
     /// Overrides default behavior for URLSessionDelegate method `urlSession(_:didBecomeInvalidWithError:)`.
@@ -157,15 +166,6 @@ open class SessionDelegate: NSObject {
     var _streamTaskDidBecomeInputStream: Any?
 
 #endif
-
-    // MARK: Properties
-
-    var retrier: RequestRetrier?
-    weak var sessionManager: SessionManager?
-
-    private var requests: [Int: Request] = [:]
-    private let lock = NSLock()
-
     /// Access the task delegate for the specified task in a thread-safe manner.
     open subscript(task: URLSessionTask) -> Request? {
         get {
